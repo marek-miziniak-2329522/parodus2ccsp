@@ -477,6 +477,7 @@ void loadCfgFile()
 			{
 				strcpy(webPaCfg.oldFirmwareVersion,"");
 			}
+			cJSON_Delete(webpa_cfg);
 		}
 		else
 		{
@@ -1054,6 +1055,8 @@ void processNotification(NotifyData *notifyData)
 	        		if (ret != WDMP_SUCCESS)
 	        		{
 	        			free(dest);
+	        			cJSON_Delete(notifyPayload);
+	        			freeNotifyMessage(notifyData);
 	        			return;
 	        		}
 	        		cJSON_AddNumberToObject(notifyPayload, "cmc", cmc);
@@ -1073,6 +1076,8 @@ void processNotification(NotifyData *notifyData)
 	        		if (ret != WDMP_SUCCESS)
 	        		{
 	        			free(dest);
+	        			cJSON_Delete(notifyPayload);
+	        			freeNotifyMessage(notifyData);
 	        			return;
 	        		}
 	        		WalPrint("Framing notifyPayload for Factory reset\n");
@@ -1093,12 +1098,15 @@ void processNotification(NotifyData *notifyData)
 	        			if (ret != WDMP_SUCCESS)
 	        			{
 	        				free(dest);
+	        				cJSON_Delete(notifyPayload);
+	        				freeNotifyMessage(notifyData);
 	        				return;
 	        			}
 	        			WalPrint("Framing notifyPayload for Firmware upgrade\n");
 	        			cJSON_AddNumberToObject(notifyPayload, "cmc", cmc);
 	        			cJSON_AddStringToObject(notifyPayload, "cid", cid);
 					OnboardLog("FIRMWARE_UPGRADE/%d/%s\n",cmc,cid);
+	        			WAL_FREE(cid);
 	        		}
 	        			break;
 
@@ -1150,6 +1158,8 @@ void processNotification(NotifyData *notifyData)
 	        		else
 	        		{
 	        			free(dest);
+	        			cJSON_Delete(notifyPayload);
+	        			freeNotifyMessage(notifyData);
 	        			return;
 	        		}
 				OnboardLog("%s/%s\n",dest,notifyData->u.status->transId);
